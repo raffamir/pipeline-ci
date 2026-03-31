@@ -20,6 +20,12 @@ jobs:
         with:
           node-version: 24
 
+      - name: Cache dependências
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}    
+
       - name: Instalar dependências
         run: npm install
 
@@ -43,6 +49,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 24
+
+      - name: Cache dependências
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}    
 
       - name: Instalar dependências
         run: npm install
@@ -77,6 +89,12 @@ jobs:
         with:
           node-version: 24
 
+      - name: Cache dependências
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}    
+
       - name: Instalar dependências
         run: npm install
 
@@ -107,6 +125,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 24
+
+      - name: Cache dependências
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}    
 
       - name: Instalar dependências
         run: npm install
