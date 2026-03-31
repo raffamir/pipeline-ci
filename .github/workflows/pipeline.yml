@@ -109,8 +109,13 @@ jobs:
 
   test:
 
-    runs-on: ubuntu-latest
     needs: build
+    strategy:
+        matrix:
+         node-version: [20, 22, 24]
+         os: [ubuntu-latest, windows-latest, macos-latest]
+
+    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Baixar artefato
@@ -124,13 +129,13 @@ jobs:
       - name: Instalar Node
         uses: actions/setup-node@v4
         with:
-          node-version: 24
+          node-version: ${{ matrix.node-version }}
 
       - name: Cache dependências
         uses: actions/cache@v4
         with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}    
+            path: ~/.npm
+            key: ${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
 
       - name: Instalar dependências
         run: npm install
