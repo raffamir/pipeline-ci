@@ -84,61 +84,33 @@ jobs:
       - name: Checkout código
         uses: actions/checkout@v4
 
-      - name: Instalar Node
-        uses: actions/setup-node@v4
+      # O "Login" é necessário para enviar a imagem para o Docker Hub
+      - name: Login no Docker Hub
+        uses: docker/login-action@v3
         with:
-          node-version: 24
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PASS }}
 
-      - name: Cache dependências
-        uses: actions/cache@v4
+      # Aqui o Docker faz o npm install e configura o ambiente sozinho
+      - name: Build e Push da Imagem
+        uses: docker/build-push-action@v5
         with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}    
-
-      - name: Instalar dependências
-        run: npm install
-
-      - name: Gerar artefato
-        run: zip -r app.zip .
-
-      - name: Publicar artefato
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-build
-          path: app.zip
+          context: .
+          push: true
+          tags: raffamir/pipeline-ci:latest # Use o seu usuário do Docker Hub
 
   test:
 
     needs: build
-    strategy:
-        matrix:
-         node-version: [20, 22, 24]
-         os: [ubuntu-latest, windows-latest, macos-latest]
-
-    runs-on: ${{ matrix.os }}
-
+    runs-on: ubuntu-latest # Não precisa mais de Windows/Mac, o Docker isola o SO
+    
     steps:
-      - name: Baixar artefato
-        uses: actions/download-artifact@v4
+      - name: Login no Docker Hub
+        uses: docker/login-action@v3
         with:
-          name: app-build
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PASS }}
 
-      - name: Extrair artefato
-        run: unzip app.zip
-
-      - name: Instalar Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
-
-      - name: Cache dependências
-        uses: actions/cache@v4
-        with:
-            path: ~/.npm
-            key: ${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
-
-      - name: Instalar dependências
-        run: npm install
-
-      - name: Rodar testes
-        run: npm test
+      # Em vez de unzip e setup-node, você apenas "chama" a imagem pronta
+      - name: Rodar testes dentro do Container
+        run: docker run raffamir/pipeline-ci:latest npm test
