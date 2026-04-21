@@ -100,7 +100,7 @@ jobs:
   test:
     needs: build
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout do Código
         uses: actions/checkout@v4
@@ -112,4 +112,4 @@ jobs:
         run: docker compose exec -T calculadora-app ping -c 1 servico-vizinho
 
       - name: Rodar Testes Unitários (NPM)
-        run: npm test
+        run: docker compose exec -T calculadora-app npm test
