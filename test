@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  # Serviço de lógica (Cálculo)
+  calculadora-back:
+    build: ./backend
+    image: raffamir/calc-backend:latest
+    # Sem a seção 'ports' aqui, o backend fica "invisível" para o seu Windows
+    # mas continua visível para o serviço 'calculadora-front'
+
+  # Serviço de interface (Simulação)
+  calculadora-front:
+    build: ./frontend
+    image: raffamir/calc-frontend:latest
+    ports:
+      - "80:80" # Agora você consegue acessar pelo localhost:80 (ou apenas localhost)
+    environment:
+      - BACKEND_URL=calculadora-back # Nome do serviço do backend para o DNS interno
+    depends_on:
+      - calculadora-back

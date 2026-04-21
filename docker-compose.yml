@@ -1,0 +1,10 @@
+services:
+  # Serviço da calculadora (O nosso código)
+  calculadora-app:
+    build: .
+    image: raffamir/pipeline-ci:latest
+
+  # Serviço auxiliar (O nosso vizinho de teste)
+  servico-vizinho:
+    image: alpine
+    command: sleep infinity

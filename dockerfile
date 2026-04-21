@@ -16,4 +16,3 @@ EXPOSE 3000
 
 # 6. Comando para ligar a aplicação
 CMD ["npm", "start"]
-
